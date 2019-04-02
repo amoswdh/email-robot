@@ -1,6 +1,7 @@
 <?php
 namespace Amos\MailRobot\Commands;
 
+use Amos\MailRobot\Models\EmailAccount;
 use Illuminate\Console\Command;
 
 
@@ -17,7 +18,7 @@ class EmailRobot extends Command
      *
      * @var string
      */
-    protected $description = '邮件自动拉取服务.';
+    protected $description = 'Email auto pull script.';
 
     /**
      * Execute the console command.
@@ -27,6 +28,8 @@ class EmailRobot extends Command
     public function handle()
     {
         echo 123;
+        $emailAccount = EmailAccount::where("status","1")->orderBy('account_id', 'desc');
+
     }
 
 
