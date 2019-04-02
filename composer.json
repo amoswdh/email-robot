@@ -1,5 +1,6 @@
 {
     "name": "amos/email-robot",
+    "description": "Laravel Imap 邮件机器人.",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -8,6 +9,16 @@
             "email": "amos.wdonghong@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Amos\\MailRobot\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Amos\\MailRobot\\Tests\\": "tests/"
+        }
+    },
     "minimum-stability": "stable",
     "require": {}
 }
