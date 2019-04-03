@@ -1,6 +1,6 @@
 <?php
 namespace Amos\MailRobot;
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
 use Illuminate\Contracts\Events\Dispatcher;
 class MailRobotServiceProvider extends ServiceProvider
@@ -24,10 +24,10 @@ class MailRobotServiceProvider extends ServiceProvider
      *
      * @param \Illuminate\Routing\Router $router
      */
-    public function boot(Router $router, Dispatcher $event)
-    {
-        $this->loadMigrationsFrom(realpath(__DIR__.'/../migrations'));
-    }
+//    public function boot(Router $router, Dispatcher $event)
+//    {
+//        $this->loadMigrationsFrom(realpath(__DIR__.'/../migrations'));
+//    }
 
     /**
      * Register the commands accessible from the Console.
