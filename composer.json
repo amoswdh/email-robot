@@ -21,6 +21,6 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php-imap/php-imap":"3.0.*"
+        "php-imap/php-imap": "^3.0"
     }
 }
