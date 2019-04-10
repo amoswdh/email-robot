@@ -3,7 +3,7 @@
 namespace Amos\MailRobot\Services;
 
 use Amos\MailRobot\Contracts\EmailAccountContract;
-use App\Models\EmailAccount;
+use Amos\MailRobot\Models\EmailAccount;
 
 class EmailAccountService implements EmailAccountContract
 {
