@@ -43,11 +43,9 @@ class ImapDownload extends Job implements ShouldQueue
         try {
             $this->emailAccount->createTicket($this->mailbox, $this->mailId);
         } catch (\Exception $e) {
-            var_dump($e->getMessage());
-            var_dump($e->getTraceAsString());
+            file_put_contents(config('api.log_path') . "email_pull_2.log", $this->emailAccount->account_id ."-".$this->mailId . "\n" .$e->getMessage() ."\n" .$e->getTraceAsString() , FILE_APPEND);
         } catch(\PDOException $e){
-            var_dump($e->getMessage());
-            var_dump($e->getTraceAsString());
+            file_put_contents(config('api.log_path') . "email_pull_2.log", $this->emailAccount->account_id ."-".$this->mailId . "\n" .$e->getMessage() ."\n" .$e->getTraceAsString() , FILE_APPEND);
         }
     }
 }

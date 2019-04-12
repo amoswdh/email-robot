@@ -71,9 +71,10 @@ class EmailRobot extends Command
                 }
                 exit;
             }catch(\Exception $e){
-                $this->info($e->getMessage());
+                file_put_contents(config('api.log_path') . "email_pull_1.log", $emailAccount->account_id . "\n" .$e->getMessage() ."\n" .$e->getTraceAsString() , FILE_APPEND);
+                continue;
             }catch(Exception $e){
-                $this->info($e->getMessage());
+                file_put_contents(config('api.log_path') . "email_pull_1.log", $emailAccount->account_id . "\n" .$e->getMessage() ."\n" .$e->getTraceAsString() , FILE_APPEND);
                 continue;
             }
         }
