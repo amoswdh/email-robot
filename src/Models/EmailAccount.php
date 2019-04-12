@@ -128,7 +128,7 @@ class EmailAccount extends Model
     {
         //邮件头
         $mailInfo = $mailbox->getMailsInfo(array($mailId));
-        $mailInfo = current($mailInfo);
+        $mailInfo = $mailInfo[0];
         //邮件详情
         $mail = $mailbox->getMail($mailId);
 
