@@ -23,6 +23,6 @@ class EmailAccountService implements EmailAccountContract
     public function all()
     {
         // TODO: Implement all() method.
-        return $this->emailAccount->where("status","1")->orderBy('account_id', 'desc')->get();
+        return $this->emailAccount->where("status","1")->where("type","asynchronous")->orderBy('account_id', 'desc')->get();
     }
 }

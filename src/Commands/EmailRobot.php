@@ -46,15 +46,10 @@ class EmailRobot extends Command
      */
     public function handle()
     {
+        $this->info("start".date("Y-m-d H:i:s"));
         //取出邮件账号
         $emailAccounts = $this->emailAccount->all();
-
         foreach($emailAccounts as $emailAccount) {
-
-            if(in_array($emailAccount->account_id,[363,362,361,360,359,358,357])){
-                continue;
-            }
-
             try{
                 //创建邮件附件存储目录
                 if(!file_exists($emailAccount->attachmentsDir())){mkdir($emailAccount->attachmentsDir(), 0777, true);}
@@ -69,7 +64,6 @@ class EmailRobot extends Command
                 foreach($mailIds as $mailId) {
                     dispatch((new ImapDownload($emailAccount, $mailbox , $mailId ))->onQueue("imap"));
                 }
-                exit;
             }catch(\Exception $e){
                 file_put_contents(config('api.log_path') . "email_pull_1.log", $emailAccount->account_id . "\n" .$e->getMessage() ."\n" .$e->getTraceAsString() , FILE_APPEND);
                 continue;
@@ -78,5 +72,6 @@ class EmailRobot extends Command
                 continue;
             }
         }
+        $this->info("end".date("Y-m-d H:i:s"));
     }
 }
