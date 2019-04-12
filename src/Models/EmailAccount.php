@@ -448,11 +448,11 @@ class EmailAccount extends Model
      */
     public function deleteMail(Mailbox $mailbox, $mailId)
     {
-//        if (in_array($this->account_id, self::$notallow_delete)) {
-//            $mailbox->moveMail($mailId, "TempHistory");
-//        } else {
-//            $mailbox->deleteMail($mailId);
-//        }
+        if (in_array($this->account_id, self::$notallow_delete)) {
+            $mailbox->moveMail($mailId, "TempHistory");
+        } else {
+            $mailbox->deleteMail($mailId);
+        }
     }
 
     /**
