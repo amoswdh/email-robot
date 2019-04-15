@@ -201,17 +201,17 @@ class EmailAccount extends Model
         $data_content['text_html'] = !empty($mail->replaceInternalLinks($this->baseUrl())) ? $mail->replaceInternalLinks($this->baseUrl()) : '';
 
         //新进邮件 - true 老邮件
-        if (property_exists($mail, "references") && self::isOldEmail($mail->references)) {
-            $data['p_message_id'] = self::getReferencesFirst($mail->references);
+        if (isset($mailInfo->references) && self::isOldEmail($mailInfo->references)) {
+            $data['p_message_id'] = self::getReferencesFirst($mailInfo->references);
             $existEmail = (new EmailInbox())->getByPMessageId($data['p_message_id']);
 
             if (!is_object($existEmail)) {
                 //保存主数据
-                $this->saveMail($mailbox, array_merge($data, ['references_str' => $mail->references, 'in_reply_to' => $mail->in_reply_to]), $data_content, $order_sn_ticket, false, true);
+                $this->saveMail($mailbox, array_merge($data, ['references_str' => $mailInfo->references, 'in_reply_to' => $mailInfo->in_reply_to]), $data_content, $order_sn_ticket, false, true);
             } else {
                 $ticket = $this->getTicket($data);
                 if (is_object($ticket)) {
-                    $this->saveMail($mailbox, array_merge($data, ['references_str' => $mail->references, 'in_reply_to' => $mail->in_reply_to]), $data_content, $order_sn_ticket, false, false, $ticket);
+                    $this->saveMail($mailbox, array_merge($data, ['references_str' => $mailInfo->references, 'in_reply_to' => $mailInfo->in_reply_to]), $data_content, $order_sn_ticket, false, false, $ticket);
                 } else {
                     $this->saveMail($mailbox, array_merge($data, ['p_message_id' => 0]), $data_content, $order_sn_ticket);
                 }
@@ -249,8 +249,8 @@ class EmailAccount extends Model
                 "is_virtual" => 1 //修复标记
             ]), array_merge($inboxContentData, [
                 "message_id" => $inboxData['p_message_id'],
-                "text_plain" => "",
-                "text_html" => ""
+                "text_plain" => "fix",
+                "text_html" => "fix"
             ]), $order_sn_ticket);
         }
 
@@ -261,10 +261,10 @@ class EmailAccount extends Model
             $emailInboxContent = (new EmailInboxContent())->create(array_merge($inboxContentData, ["email_id" => $emailInbox->email_id]));
             //新增工单
             if ($add_ticket) {
-                $ticket = $this->addTicket($emailInbox, $order_sn_ticket);
+                $this->addTicket($emailInbox, $order_sn_ticket);
             }
         }
-        if (is_object($emailInbox) && is_object($emailInboxContent) && is_object($ticket)) {
+        if (is_object($emailInbox) && is_object($emailInboxContent)) {
             DB::commit();
 
             //打开Ticket
