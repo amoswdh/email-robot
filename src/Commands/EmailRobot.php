@@ -65,10 +65,10 @@ class EmailRobot extends Command
                     dispatch((new ImapDownload($emailAccount, $mailbox , $mailId ))->onQueue("imap"));
                 }
             }catch(\Exception $e){
-                file_put_contents(config('api.log_path') . "email_pull_1.log", $emailAccount->account_id . "\n" .$e->getMessage() ."\n" .$e->getTraceAsString() , FILE_APPEND);
+                file_put_contents(config('api.log_path') . "email_pull_1.log", date("Y-m-d H:i:s"). "\n" .$emailAccount->account_id . "\n" .$e->getMessage() ."\n" .$e->getTraceAsString()."\n" , FILE_APPEND);
                 continue;
             }catch(Exception $e){
-                file_put_contents(config('api.log_path') . "email_pull_1.log", $emailAccount->account_id . "\n" .$e->getMessage() ."\n" .$e->getTraceAsString() , FILE_APPEND);
+                file_put_contents(config('api.log_path') . "email_pull_1.log", date("Y-m-d H:i:s"). "\n" .$emailAccount->account_id . "\n" .$e->getMessage() ."\n" .$e->getTraceAsString()."\n" , FILE_APPEND);
                 continue;
             }
         }

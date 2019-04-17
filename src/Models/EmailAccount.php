@@ -85,14 +85,16 @@ class EmailAccount extends Model
      * @param $p_message_id
      * @return bool
      */
-    public function checkMail(Mailbox $mailbox, $mail, $mailId, $p_message_id)
+    public function checkMail(Mailbox $mailbox, $mail, $mailId, $matches)
     {
         $result = true;
         //已存在邮件信息
-        $emailTicket = EmailTicketNew::where("p_message_id", $p_message_id)->first();
-        if (is_object($emailTicket)) {
-            $result = false;
-            $this->deleteMail($mailbox, $mailId);
+        if(!empty($matches) && isset($matches[1])){
+            $emailTicket = EmailTicketNew::where("p_message_id", $matches[1])->first();
+            if (is_object($emailTicket)) {
+                $result = false;
+                $this->deleteMail($mailbox, $mailId);
+            }
         }
         //邮件标题、内容为空
         if (empty($mail->subject) AND empty($mail->textPlain) AND empty($mail->textHtml)) {
@@ -145,7 +147,7 @@ class EmailAccount extends Model
         preg_match('/<(.*)>/', $mail->messageId, $matches);
 
         //校验邮件有效性
-        if (!$this->checkMail($mailbox, $mail, $mailId, $matches[1])) exit;
+        if (!$this->checkMail($mailbox, $mail, $mailId, $matches)) exit;
 
         //邮件标题中提取订单号信息
         $subject = $mail->subject;
@@ -159,8 +161,8 @@ class EmailAccount extends Model
         $order_sn_ticket = isset($tmp_order_sn[1]) && !empty($tmp_order_sn[1]) ? $tmp_order_sn[1] : 0;
 
         $data = [];
-        $data['message_id'] = empty($matches[1]) ? self::createMessageID($mailInfo->subject, strtotime($mailInfo->date)) : $matches[1];
-        $data['email_sn'] = self::createEmailSN($data['message_id'], $mailInfo->subject, strtotime($mailInfo->date));
+        $data['message_id'] = empty($matches[1]) ? self::createMessageID($subject, strtotime($mailInfo->date)) : $matches[1];
+        $data['email_sn'] = self::createEmailSN($data['message_id'], $subject, strtotime($mailInfo->date));
         $data['subject'] = $subject;
         $data['account_id'] = $this->account_id;
         $data['service_mail_id'] = isset($mail->id) && !empty($mail->id) ? $mail->id : $mailId;
@@ -205,13 +207,15 @@ class EmailAccount extends Model
             $data['p_message_id'] = self::getReferencesFirst($mailInfo->references);
             $existEmail = (new EmailInbox())->getByPMessageId($data['p_message_id']);
 
+            $in_reply_to = isset($mailInfo->in_reply_to) ? $mailInfo->in_reply_to : "";
+
             if (!is_object($existEmail)) {
                 //保存主数据
-                $this->saveMail($mailbox, array_merge($data, ['references_str' => $mailInfo->references, 'in_reply_to' => $mailInfo->in_reply_to]), $data_content, $order_sn_ticket, false, true);
+                $this->saveMail($mailbox, array_merge($data, ['references_str' => $mailInfo->references, 'in_reply_to' => $in_reply_to]), $data_content, $order_sn_ticket, false, true);
             } else {
                 $ticket = $this->getTicket($data);
                 if (is_object($ticket)) {
-                    $this->saveMail($mailbox, array_merge($data, ['references_str' => $mailInfo->references, 'in_reply_to' => $mailInfo->in_reply_to]), $data_content, $order_sn_ticket, false, false, $ticket);
+                    $this->saveMail($mailbox, array_merge($data, ['references_str' => $mailInfo->references, 'in_reply_to' => $in_reply_to]), $data_content, $order_sn_ticket, false, false, $ticket);
                 } else {
                     $this->saveMail($mailbox, array_merge($data, ['p_message_id' => 0]), $data_content, $order_sn_ticket);
                 }
@@ -290,7 +294,8 @@ class EmailAccount extends Model
      */
     public function addTicket(EmailInbox $emailInbox, $order_sn_ticket, $email_cs_admin_id = 11)
     {
-        $p_message_id = $emailInbox->is_virtual == 1 ? $emailInbox->p_message_id : $emailInbox->message_id;
+//        $p_message_id = $emailInbox->is_virtual == 1 ? $emailInbox->p_message_id : $emailInbox->message_id;
+        $p_message_id = $emailInbox->message_id;
         switch ($this->site->site_id) {
             case 1:
                 $ticket_sn_tmp = 'ST';
