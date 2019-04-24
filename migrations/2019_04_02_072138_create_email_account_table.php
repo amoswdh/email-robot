@@ -34,6 +34,7 @@ class CreateEmailAccountTable extends Migration
             $table->integer('add_time');
             $table->string('email_qiye');
             $table->tinyInteger('department_status');
+            $table->enum('type', ['synchronous', 'asynchronous']);
             $table->timestamps();
         });
     }

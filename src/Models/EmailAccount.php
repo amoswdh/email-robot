@@ -280,6 +280,7 @@ class EmailAccount extends Model
             EmailLog::where("mail_id", $inboxData["service_mail_id"])->where("account_id", $inboxData["account_id"])->update(["status" => 1]);
             //邮件拉取成功后 - 统一删除邮件信息
             $this->deleteMail($mailbox, $inboxData["service_mail_id"]);
+            imap_gc($mailbox->getImapStream(), IMAP_GC_ELT);
         } else {
             DB::rollBack();
         }
