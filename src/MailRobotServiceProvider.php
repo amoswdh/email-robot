@@ -24,10 +24,12 @@ class MailRobotServiceProvider extends ServiceProvider
      *
      * @param \Illuminate\Routing\Router $router
      */
-//    public function boot(Router $router, Dispatcher $event)
-//    {
-//        $this->loadMigrationsFrom(realpath(__DIR__.'/../migrations'));
-//    }
+    public function boot(Router $router, Dispatcher $event)
+    {
+        $this->publishes([
+            __DIR__.'/../migrations/' => database_path('migrations')
+        ], 'migrations');
+    }
 
     /**
      * Register the commands accessible from the Console.
